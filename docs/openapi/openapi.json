@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Bifrost API",
-    "description": "Bifrost HTTP Transport API for AI model inference and gateway management.\n\nThis API provides a unified interface for interacting with multiple AI providers\nincluding OpenAI, Anthropic, Bedrock, Gemini, and more through a single API,\nalong with comprehensive management APIs for configuring and monitoring the gateway.\n\n## API Structure\n\n### Unified Inference API (`/v1/*`)\nThe primary API using Bifrost's unified format. Model parameters use the format\n`provider/model` (e.g., `openai/gpt-4`, `anthropic/claude-3-opus`).\n\n### Async Inference API (`/v1/async/*`)\nSubmit inference requests for asynchronous execution. Returns a job ID immediately\nand allows polling for results. Supports all inference types except batches, files,\nand containers.\n\n### Provider Integration APIs\nNative provider-format APIs for drop-in compatibility:\n- `/openai/*` - OpenAI-compatible API\n- `/anthropic/*` - Anthropic-compatible API\n- `/genai/*` - Google GenAI (Gemini) compatible API\n- `/bedrock/*` - AWS Bedrock compatible API\n- `/cohere/*` - Cohere compatible API\n\n### Framework Integration APIs\nMulti-provider proxy endpoints for AI frameworks:\n- `/litellm/*` - LiteLLM proxy with all provider formats\n- `/langchain/*` - LangChain compatible endpoints\n- `/pydanticai/*` - PydanticAI compatible endpoints\n\n### Management APIs (`/api/*`)\nAPIs for managing and monitoring the Bifrost gateway:\n- `/api/config` - Configuration management\n- `/api/providers` - Provider and API key management\n- `/api/plugins` - Plugin management\n- `/api/governance/*` - Virtual keys, teams, customers, budgets, rate limits, and routing rules\n- `/api/logs` - Log search and analytics\n- `/api/mcp/*` - MCP (Model Context Protocol) client management\n- `/api/session/*` - Authentication and session management\n- `/api/cache/*` - Cache management\n- `/health` - Health check endpoint\n\n## Fallbacks\nRequests can include fallback models that will be tried if the primary model fails.\n",
+    "description": "Bifrost HTTP Transport API for AI model inference and gateway management.\n\nThis API provides a unified interface for interacting with multiple AI providers\nincluding OpenAI, Anthropic, Bedrock, Gemini, and more through a single API,\nalong with comprehensive management APIs for configuring and monitoring the gateway.\n\n## API Structure\n\n### Unified Inference API (`/v1/*`)\nThe primary API using Bifrost's unified format. Model parameters use the format\n`provider/model` (e.g., `openai/gpt-4`, `anthropic/claude-3-opus`).\n\n### Async Inference API (`/v1/async/*`)\nSubmit inference requests for asynchronous execution. Returns a job ID immediately\nand allows polling for results. Supports all inference types except batches, files,\nand containers.\n\n### Provider Integration APIs\nNative provider-format APIs for drop-in compatibility:\n- `/openai/*` - OpenAI-compatible API\n- `/anthropic/*` - Anthropic-compatible API\n- `/genai/*` - Google GenAI (Gemini) compatible API\n- `/bedrock/*` - AWS Bedrock compatible API\n- `/cohere/*` - Cohere compatible API\n\n### Framework Integration APIs\nMulti-provider proxy endpoints for AI frameworks:\n- `/litellm/*` - LiteLLM proxy with all provider formats\n- `/langchain/*` - LangChain compatible endpoints\n- `/pydanticai/*` - PydanticAI compatible endpoints\n\n### Management APIs (`/api/*`)\nAPIs for managing and monitoring the Bifrost gateway:\n- `/api/config` - Configuration management\n- `/api/providers` - Provider and API key management\n- `/api/plugins` - Plugin management\n- `/api/governance/*` - Virtual keys, teams, customers, budgets, rate limits, routing rules, and pricing overrides\n- `/api/logs` - Log search and analytics\n- `/api/mcp/*` - MCP (Model Context Protocol) client management\n- `/api/session/*` - Authentication and session management\n- `/api/cache/*` - Cache management\n- `/health` - Health check endpoint\n\n## Fallbacks\nRequests can include fallback models that will be tried if the primary model fails.\n",
     "version": "1.0.0",
     "contact": {
       "name": "Contact Us",
@@ -145104,7 +145104,9 @@
                                   "type": "string"
                                 },
                                 "weight": {
-                                  "type": "number"
+                                  "type": "number",
+                                  "nullable": true,
+                                  "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                 },
                                 "allowed_models": {
                                   "type": "array",
@@ -145649,6 +145651,7 @@
                   },
                   "provider_configs": {
                     "type": "array",
+                    "description": "Provider configurations (empty means no providers allowed, deny-by-default)",
                     "items": {
                       "type": "object",
                       "properties": {
@@ -145656,7 +145659,9 @@
                           "type": "string"
                         },
                         "weight": {
-                          "type": "number"
+                          "type": "number",
+                          "nullable": true,
+                          "description": "Weight for load balancing. Null means excluded from weighted routing."
                         },
                         "allowed_models": {
                           "type": "array",
@@ -145711,6 +145716,7 @@
                   },
                   "mcp_configs": {
                     "type": "array",
+                    "description": "MCP configurations (empty means no MCP tools allowed, deny-by-default)",
                     "items": {
                       "type": "object",
                       "properties": {
@@ -145823,7 +145829,9 @@
                                 "type": "string"
                               },
                               "weight": {
-                                "type": "number"
+                                "type": "number",
+                                "nullable": true,
+                                "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                               },
                               "allowed_models": {
                                 "type": "array",
@@ -146494,7 +146502,9 @@
                                 "type": "string"
                               },
                               "weight": {
-                                "type": "number"
+                                "type": "number",
+                                "nullable": true,
+                                "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                               },
                               "allowed_models": {
                                 "type": "array",
@@ -147137,7 +147147,9 @@
                           "type": "string"
                         },
                         "weight": {
-                          "type": "number"
+                          "type": "number",
+                          "nullable": true,
+                          "description": "Weight for load balancing. Null means excluded from weighted routing."
                         },
                         "allowed_models": {
                           "type": "array",
@@ -147299,7 +147311,9 @@
                                 "type": "string"
                               },
                               "weight": {
-                                "type": "number"
+                                "type": "number",
+                                "nullable": true,
+                                "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                               },
                               "allowed_models": {
                                 "type": "array",
@@ -148334,7 +148348,9 @@
                                             "type": "string"
                                           },
                                           "weight": {
-                                            "type": "number"
+                                            "type": "number",
+                                            "nullable": true,
+                                            "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                           },
                                           "allowed_models": {
                                             "type": "array",
@@ -148845,7 +148861,9 @@
                                         "type": "string"
                                       },
                                       "weight": {
-                                        "type": "number"
+                                        "type": "number",
+                                        "nullable": true,
+                                        "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                       },
                                       "allowed_models": {
                                         "type": "array",
@@ -149556,7 +149574,9 @@
                                           "type": "string"
                                         },
                                         "weight": {
-                                          "type": "number"
+                                          "type": "number",
+                                          "nullable": true,
+                                          "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                         },
                                         "allowed_models": {
                                           "type": "array",
@@ -150067,7 +150087,9 @@
                                       "type": "string"
                                     },
                                     "weight": {
-                                      "type": "number"
+                                      "type": "number",
+                                      "nullable": true,
+                                      "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                     },
                                     "allowed_models": {
                                       "type": "array",
@@ -150838,7 +150860,9 @@
                                           "type": "string"
                                         },
                                         "weight": {
-                                          "type": "number"
+                                          "type": "number",
+                                          "nullable": true,
+                                          "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                         },
                                         "allowed_models": {
                                           "type": "array",
@@ -151349,7 +151373,9 @@
                                       "type": "string"
                                     },
                                     "weight": {
-                                      "type": "number"
+                                      "type": "number",
+                                      "nullable": true,
+                                      "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                     },
                                     "allowed_models": {
                                       "type": "array",
@@ -152144,7 +152170,9 @@
                                           "type": "string"
                                         },
                                         "weight": {
-                                          "type": "number"
+                                          "type": "number",
+                                          "nullable": true,
+                                          "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                         },
                                         "allowed_models": {
                                           "type": "array",
@@ -152655,7 +152683,9 @@
                                       "type": "string"
                                     },
                                     "weight": {
-                                      "type": "number"
+                                      "type": "number",
+                                      "nullable": true,
+                                      "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                     },
                                     "allowed_models": {
                                       "type": "array",
@@ -153693,7 +153723,9 @@
                                         "type": "string"
                                       },
                                       "weight": {
-                                        "type": "number"
+                                        "type": "number",
+                                        "nullable": true,
+                                        "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                       },
                                       "allowed_models": {
                                         "type": "array",
@@ -154372,7 +154404,9 @@
                                       "type": "string"
                                     },
                                     "weight": {
-                                      "type": "number"
+                                      "type": "number",
+                                      "nullable": true,
+                                      "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                     },
                                     "allowed_models": {
                                       "type": "array",
@@ -155181,7 +155215,9 @@
                                                 "type": "string"
                                               },
                                               "weight": {
-                                                "type": "number"
+                                                "type": "number",
+                                                "nullable": true,
+                                                "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                               },
                                               "allowed_models": {
                                                 "type": "array",
@@ -155692,7 +155728,9 @@
                                             "type": "string"
                                           },
                                           "weight": {
-                                            "type": "number"
+                                            "type": "number",
+                                            "nullable": true,
+                                            "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                           },
                                           "allowed_models": {
                                             "type": "array",
@@ -156181,7 +156219,9 @@
                                       "type": "string"
                                     },
                                     "weight": {
-                                      "type": "number"
+                                      "type": "number",
+                                      "nullable": true,
+                                      "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                     },
                                     "allowed_models": {
                                       "type": "array",
@@ -156944,7 +156984,9 @@
                                       "type": "string"
                                     },
                                     "weight": {
-                                      "type": "number"
+                                      "type": "number",
+                                      "nullable": true,
+                                      "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                     },
                                     "allowed_models": {
                                       "type": "array",
@@ -162351,6 +162393,2078 @@
                           "type": "string"
                         }
                       }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error response from Bifrost",
+                  "properties": {
+                    "event_id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "is_bifrost_error": {
+                      "type": "boolean"
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "param": {
+                          "type": "string"
+                        },
+                        "event_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "extra_fields": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "description": "AI model provider identifier",
+                          "enum": [
+                            "openai",
+                            "azure",
+                            "anthropic",
+                            "bedrock",
+                            "cohere",
+                            "vertex",
+                            "vllm",
+                            "mistral",
+                            "ollama",
+                            "groq",
+                            "sgl",
+                            "parasail",
+                            "perplexity",
+                            "replicate",
+                            "cerebras",
+                            "gemini",
+                            "openrouter",
+                            "elevenlabs",
+                            "huggingface",
+                            "nebius",
+                            "xai",
+                            "runway"
+                          ]
+                        },
+                        "model_requested": {
+                          "type": "string"
+                        },
+                        "request_type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/governance/pricing-overrides": {
+      "get": {
+        "operationId": "listPricingOverrides",
+        "summary": "List pricing overrides",
+        "description": "Returns all pricing overrides, optionally filtered by scope.",
+        "tags": [
+          "Governance"
+        ],
+        "parameters": [
+          {
+            "name": "scope_kind",
+            "in": "query",
+            "description": "Filter by scope kind",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "global",
+                "provider",
+                "provider_key",
+                "virtual_key",
+                "virtual_key_provider",
+                "virtual_key_provider_key"
+              ]
+            }
+          },
+          {
+            "name": "virtual_key_id",
+            "in": "query",
+            "description": "Filter by virtual key ID (for virtual_key* scopes)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "provider_id",
+            "in": "query",
+            "description": "Filter by provider ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "provider_key_id",
+            "in": "query",
+            "description": "Filter by provider key ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "pricing_overrides": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "A pricing override that applies custom rates to matching requests.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique override ID (UUID)"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Human-readable label"
+                          },
+                          "scope_kind": {
+                            "type": "string",
+                            "enum": [
+                              "global",
+                              "provider",
+                              "provider_key",
+                              "virtual_key",
+                              "virtual_key_provider",
+                              "virtual_key_provider_key"
+                            ],
+                            "description": "Scope that determines which requests this override applies to"
+                          },
+                          "virtual_key_id": {
+                            "type": "string",
+                            "nullable": true,
+                            "description": "Required for virtual_key* scopes"
+                          },
+                          "provider_id": {
+                            "type": "string",
+                            "nullable": true,
+                            "description": "Required for provider and virtual_key_provider scopes"
+                          },
+                          "provider_key_id": {
+                            "type": "string",
+                            "nullable": true,
+                            "description": "Required for provider_key and virtual_key_provider_key scopes"
+                          },
+                          "match_type": {
+                            "type": "string",
+                            "enum": [
+                              "exact",
+                              "wildcard"
+                            ],
+                            "description": "How the pattern is matched against the model name"
+                          },
+                          "pattern": {
+                            "type": "string",
+                            "description": "Model name or wildcard prefix (e.g. \"gpt-4o\" or \"claude-3*\")"
+                          },
+                          "request_types": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "string",
+                              "description": "Request type for pricing override filtering. Stream variants are treated identically to their base type — specifying `chat_completion` covers both streaming and non-streaming chat requests.\n",
+                              "enum": [
+                                "chat_completion",
+                                "text_completion",
+                                "responses",
+                                "embedding",
+                                "rerank",
+                                "speech",
+                                "transcription",
+                                "image_generation",
+                                "image_variation",
+                                "image_edit",
+                                "video_generation",
+                                "video_remix"
+                              ]
+                            },
+                            "description": "Request types this override applies to. At least one value is required."
+                          },
+                          "pricing_patch": {
+                            "type": "string",
+                            "description": "JSON-encoded pricing fields to override (as stored in the database)"
+                          },
+                          "patch": {
+                            "type": "object",
+                            "description": "Decoded pricing fields (present in API responses)",
+                            "properties": {
+                              "input_cost_per_token": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_token": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "input_cost_per_token_batches": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_token_batches": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "input_cost_per_token_priority": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_token_priority": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "input_cost_per_character": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "input_cost_per_token_above_128k_tokens": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_token_above_128k_tokens": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "input_cost_per_token_above_200k_tokens": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_token_above_200k_tokens": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "cache_creation_input_token_cost": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "cache_read_input_token_cost": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "cache_creation_input_token_cost_above_200k_tokens": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "cache_read_input_token_cost_above_200k_tokens": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "cache_read_input_token_cost_priority": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "cache_read_input_image_token_cost": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "cache_creation_input_audio_token_cost": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "input_cost_per_image": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_image": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "input_cost_per_pixel": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_pixel": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "input_cost_per_image_token": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_image_token": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_image_low_quality": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_image_medium_quality": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_image_high_quality": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_image_auto_quality": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_image_premium_image": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_image_above_512_and_512_pixels": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_image_above_1024_and_1024_pixels": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_image_above_2048_and_2048_pixels": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_image_above_4096_and_4096_pixels": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "input_cost_per_audio_token": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_audio_token": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "input_cost_per_audio_per_second": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "input_cost_per_second": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "input_cost_per_video_per_second": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_video_per_second": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "output_cost_per_second": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "search_context_cost_per_query": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "code_interpreter_cost_per_session": {
+                                "type": "number",
+                                "minimum": 0
+                              }
+                            }
+                          },
+                          "config_hash": {
+                            "type": "string",
+                            "nullable": true,
+                            "description": "Auto-managed hash for config-file-sourced overrides. Do not set manually."
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Total number of overrides returned"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error response from Bifrost",
+                  "properties": {
+                    "event_id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "is_bifrost_error": {
+                      "type": "boolean"
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "param": {
+                          "type": "string"
+                        },
+                        "event_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "extra_fields": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "description": "AI model provider identifier",
+                          "enum": [
+                            "openai",
+                            "azure",
+                            "anthropic",
+                            "bedrock",
+                            "cohere",
+                            "vertex",
+                            "vllm",
+                            "mistral",
+                            "ollama",
+                            "groq",
+                            "sgl",
+                            "parasail",
+                            "perplexity",
+                            "replicate",
+                            "cerebras",
+                            "gemini",
+                            "openrouter",
+                            "elevenlabs",
+                            "huggingface",
+                            "nebius",
+                            "xai",
+                            "runway"
+                          ]
+                        },
+                        "model_requested": {
+                          "type": "string"
+                        },
+                        "request_type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createPricingOverride",
+        "summary": "Create pricing override",
+        "description": "Creates a new pricing override. The most specific matching scope always wins during cost resolution.",
+        "tags": [
+          "Governance"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Request body for creating or updating a pricing override.",
+                "required": [
+                  "name",
+                  "scope_kind",
+                  "match_type",
+                  "pattern",
+                  "request_types"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Human-readable label"
+                  },
+                  "scope_kind": {
+                    "type": "string",
+                    "enum": [
+                      "global",
+                      "provider",
+                      "provider_key",
+                      "virtual_key",
+                      "virtual_key_provider",
+                      "virtual_key_provider_key"
+                    ]
+                  },
+                  "virtual_key_id": {
+                    "type": "string",
+                    "description": "Required for virtual_key* scopes"
+                  },
+                  "provider_id": {
+                    "type": "string",
+                    "description": "Required for provider and virtual_key_provider scopes"
+                  },
+                  "provider_key_id": {
+                    "type": "string",
+                    "description": "Required for provider_key and virtual_key_provider_key scopes"
+                  },
+                  "match_type": {
+                    "type": "string",
+                    "enum": [
+                      "exact",
+                      "wildcard"
+                    ]
+                  },
+                  "pattern": {
+                    "type": "string",
+                    "description": "Model name or wildcard prefix ending with * (e.g. \"claude-3*\")"
+                  },
+                  "request_types": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string",
+                      "description": "Request type for pricing override filtering. Stream variants are treated identically to their base type — specifying `chat_completion` covers both streaming and non-streaming chat requests.\n",
+                      "enum": [
+                        "chat_completion",
+                        "text_completion",
+                        "responses",
+                        "embedding",
+                        "rerank",
+                        "speech",
+                        "transcription",
+                        "image_generation",
+                        "image_variation",
+                        "image_edit",
+                        "video_generation",
+                        "video_remix"
+                      ]
+                    },
+                    "description": "Request types this override applies to. At least one value is required."
+                  },
+                  "patch": {
+                    "type": "object",
+                    "description": "Pricing fields to override. Only non-zero/non-null fields are applied. All values are cost per unit in USD.\n",
+                    "properties": {
+                      "input_cost_per_token": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_token": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_token_batches": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_token_batches": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_token_priority": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_token_priority": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_character": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_token_above_128k_tokens": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_token_above_128k_tokens": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_token_above_200k_tokens": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_token_above_200k_tokens": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "cache_creation_input_token_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "cache_read_input_token_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "cache_creation_input_token_cost_above_200k_tokens": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "cache_read_input_token_cost_above_200k_tokens": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "cache_read_input_token_cost_priority": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "cache_read_input_image_token_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "cache_creation_input_audio_token_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_image": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_pixel": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_pixel": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_image_token": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_token": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_low_quality": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_medium_quality": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_high_quality": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_auto_quality": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_premium_image": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_above_512_and_512_pixels": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_above_1024_and_1024_pixels": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_above_2048_and_2048_pixels": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_above_4096_and_4096_pixels": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_audio_token": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_audio_token": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_audio_per_second": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_second": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_video_per_second": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_video_per_second": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_second": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "search_context_cost_per_query": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "code_interpreter_cost_per_session": {
+                        "type": "number",
+                        "minimum": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pricing override created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "pricing_override": {
+                      "type": "object",
+                      "description": "A pricing override that applies custom rates to matching requests.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Unique override ID (UUID)"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Human-readable label"
+                        },
+                        "scope_kind": {
+                          "type": "string",
+                          "enum": [
+                            "global",
+                            "provider",
+                            "provider_key",
+                            "virtual_key",
+                            "virtual_key_provider",
+                            "virtual_key_provider_key"
+                          ],
+                          "description": "Scope that determines which requests this override applies to"
+                        },
+                        "virtual_key_id": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "Required for virtual_key* scopes"
+                        },
+                        "provider_id": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "Required for provider and virtual_key_provider scopes"
+                        },
+                        "provider_key_id": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "Required for provider_key and virtual_key_provider_key scopes"
+                        },
+                        "match_type": {
+                          "type": "string",
+                          "enum": [
+                            "exact",
+                            "wildcard"
+                          ],
+                          "description": "How the pattern is matched against the model name"
+                        },
+                        "pattern": {
+                          "type": "string",
+                          "description": "Model name or wildcard prefix (e.g. \"gpt-4o\" or \"claude-3*\")"
+                        },
+                        "request_types": {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "string",
+                            "description": "Request type for pricing override filtering. Stream variants are treated identically to their base type — specifying `chat_completion` covers both streaming and non-streaming chat requests.\n",
+                            "enum": [
+                              "chat_completion",
+                              "text_completion",
+                              "responses",
+                              "embedding",
+                              "rerank",
+                              "speech",
+                              "transcription",
+                              "image_generation",
+                              "image_variation",
+                              "image_edit",
+                              "video_generation",
+                              "video_remix"
+                            ]
+                          },
+                          "description": "Request types this override applies to. At least one value is required."
+                        },
+                        "pricing_patch": {
+                          "type": "string",
+                          "description": "JSON-encoded pricing fields to override (as stored in the database)"
+                        },
+                        "patch": {
+                          "type": "object",
+                          "description": "Decoded pricing fields (present in API responses)",
+                          "properties": {
+                            "input_cost_per_token": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_token": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_token_batches": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_token_batches": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_token_priority": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_token_priority": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_character": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_token_above_128k_tokens": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_token_above_128k_tokens": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_token_above_200k_tokens": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_token_above_200k_tokens": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "cache_creation_input_token_cost": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "cache_read_input_token_cost": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "cache_creation_input_token_cost_above_200k_tokens": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "cache_read_input_token_cost_above_200k_tokens": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "cache_read_input_token_cost_priority": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "cache_read_input_image_token_cost": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "cache_creation_input_audio_token_cost": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_image": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_pixel": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_pixel": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_image_token": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_token": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_low_quality": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_medium_quality": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_high_quality": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_auto_quality": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_premium_image": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_above_512_and_512_pixels": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_above_1024_and_1024_pixels": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_above_2048_and_2048_pixels": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_above_4096_and_4096_pixels": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_audio_token": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_audio_token": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_audio_per_second": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_second": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_video_per_second": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_video_per_second": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_second": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "search_context_cost_per_query": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "code_interpreter_cost_per_session": {
+                              "type": "number",
+                              "minimum": 0
+                            }
+                          }
+                        },
+                        "config_hash": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "Auto-managed hash for config-file-sourced overrides. Do not set manually."
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error response from Bifrost",
+                  "properties": {
+                    "event_id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "is_bifrost_error": {
+                      "type": "boolean"
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "param": {
+                          "type": "string"
+                        },
+                        "event_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "extra_fields": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "description": "AI model provider identifier",
+                          "enum": [
+                            "openai",
+                            "azure",
+                            "anthropic",
+                            "bedrock",
+                            "cohere",
+                            "vertex",
+                            "vllm",
+                            "mistral",
+                            "ollama",
+                            "groq",
+                            "sgl",
+                            "parasail",
+                            "perplexity",
+                            "replicate",
+                            "cerebras",
+                            "gemini",
+                            "openrouter",
+                            "elevenlabs",
+                            "huggingface",
+                            "nebius",
+                            "xai",
+                            "runway"
+                          ]
+                        },
+                        "model_requested": {
+                          "type": "string"
+                        },
+                        "request_type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error response from Bifrost",
+                  "properties": {
+                    "event_id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "is_bifrost_error": {
+                      "type": "boolean"
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "param": {
+                          "type": "string"
+                        },
+                        "event_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "extra_fields": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "description": "AI model provider identifier",
+                          "enum": [
+                            "openai",
+                            "azure",
+                            "anthropic",
+                            "bedrock",
+                            "cohere",
+                            "vertex",
+                            "vllm",
+                            "mistral",
+                            "ollama",
+                            "groq",
+                            "sgl",
+                            "parasail",
+                            "perplexity",
+                            "replicate",
+                            "cerebras",
+                            "gemini",
+                            "openrouter",
+                            "elevenlabs",
+                            "huggingface",
+                            "nebius",
+                            "xai",
+                            "runway"
+                          ]
+                        },
+                        "model_requested": {
+                          "type": "string"
+                        },
+                        "request_type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/governance/pricing-overrides/{id}": {
+      "put": {
+        "operationId": "updatePricingOverride",
+        "summary": "Update pricing override",
+        "description": "Replaces an existing pricing override's configuration.",
+        "tags": [
+          "Governance"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Pricing override ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Request body for creating or updating a pricing override.",
+                "required": [
+                  "name",
+                  "scope_kind",
+                  "match_type",
+                  "pattern",
+                  "request_types"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Human-readable label"
+                  },
+                  "scope_kind": {
+                    "type": "string",
+                    "enum": [
+                      "global",
+                      "provider",
+                      "provider_key",
+                      "virtual_key",
+                      "virtual_key_provider",
+                      "virtual_key_provider_key"
+                    ]
+                  },
+                  "virtual_key_id": {
+                    "type": "string",
+                    "description": "Required for virtual_key* scopes"
+                  },
+                  "provider_id": {
+                    "type": "string",
+                    "description": "Required for provider and virtual_key_provider scopes"
+                  },
+                  "provider_key_id": {
+                    "type": "string",
+                    "description": "Required for provider_key and virtual_key_provider_key scopes"
+                  },
+                  "match_type": {
+                    "type": "string",
+                    "enum": [
+                      "exact",
+                      "wildcard"
+                    ]
+                  },
+                  "pattern": {
+                    "type": "string",
+                    "description": "Model name or wildcard prefix ending with * (e.g. \"claude-3*\")"
+                  },
+                  "request_types": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string",
+                      "description": "Request type for pricing override filtering. Stream variants are treated identically to their base type — specifying `chat_completion` covers both streaming and non-streaming chat requests.\n",
+                      "enum": [
+                        "chat_completion",
+                        "text_completion",
+                        "responses",
+                        "embedding",
+                        "rerank",
+                        "speech",
+                        "transcription",
+                        "image_generation",
+                        "image_variation",
+                        "image_edit",
+                        "video_generation",
+                        "video_remix"
+                      ]
+                    },
+                    "description": "Request types this override applies to. At least one value is required."
+                  },
+                  "patch": {
+                    "type": "object",
+                    "description": "Pricing fields to override. Only non-zero/non-null fields are applied. All values are cost per unit in USD.\n",
+                    "properties": {
+                      "input_cost_per_token": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_token": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_token_batches": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_token_batches": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_token_priority": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_token_priority": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_character": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_token_above_128k_tokens": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_token_above_128k_tokens": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_token_above_200k_tokens": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_token_above_200k_tokens": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "cache_creation_input_token_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "cache_read_input_token_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "cache_creation_input_token_cost_above_200k_tokens": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "cache_read_input_token_cost_above_200k_tokens": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "cache_read_input_token_cost_priority": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "cache_read_input_image_token_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "cache_creation_input_audio_token_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_image": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_pixel": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_pixel": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_image_token": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_token": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_low_quality": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_medium_quality": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_high_quality": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_auto_quality": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_premium_image": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_above_512_and_512_pixels": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_above_1024_and_1024_pixels": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_above_2048_and_2048_pixels": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_image_above_4096_and_4096_pixels": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_audio_token": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_audio_token": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_audio_per_second": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_second": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "input_cost_per_video_per_second": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_video_per_second": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "output_cost_per_second": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "search_context_cost_per_query": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "code_interpreter_cost_per_session": {
+                        "type": "number",
+                        "minimum": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pricing override updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "pricing_override": {
+                      "type": "object",
+                      "description": "A pricing override that applies custom rates to matching requests.",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Unique override ID (UUID)"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Human-readable label"
+                        },
+                        "scope_kind": {
+                          "type": "string",
+                          "enum": [
+                            "global",
+                            "provider",
+                            "provider_key",
+                            "virtual_key",
+                            "virtual_key_provider",
+                            "virtual_key_provider_key"
+                          ],
+                          "description": "Scope that determines which requests this override applies to"
+                        },
+                        "virtual_key_id": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "Required for virtual_key* scopes"
+                        },
+                        "provider_id": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "Required for provider and virtual_key_provider scopes"
+                        },
+                        "provider_key_id": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "Required for provider_key and virtual_key_provider_key scopes"
+                        },
+                        "match_type": {
+                          "type": "string",
+                          "enum": [
+                            "exact",
+                            "wildcard"
+                          ],
+                          "description": "How the pattern is matched against the model name"
+                        },
+                        "pattern": {
+                          "type": "string",
+                          "description": "Model name or wildcard prefix (e.g. \"gpt-4o\" or \"claude-3*\")"
+                        },
+                        "request_types": {
+                          "type": "array",
+                          "minItems": 1,
+                          "items": {
+                            "type": "string",
+                            "description": "Request type for pricing override filtering. Stream variants are treated identically to their base type — specifying `chat_completion` covers both streaming and non-streaming chat requests.\n",
+                            "enum": [
+                              "chat_completion",
+                              "text_completion",
+                              "responses",
+                              "embedding",
+                              "rerank",
+                              "speech",
+                              "transcription",
+                              "image_generation",
+                              "image_variation",
+                              "image_edit",
+                              "video_generation",
+                              "video_remix"
+                            ]
+                          },
+                          "description": "Request types this override applies to. At least one value is required."
+                        },
+                        "pricing_patch": {
+                          "type": "string",
+                          "description": "JSON-encoded pricing fields to override (as stored in the database)"
+                        },
+                        "patch": {
+                          "type": "object",
+                          "description": "Decoded pricing fields (present in API responses)",
+                          "properties": {
+                            "input_cost_per_token": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_token": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_token_batches": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_token_batches": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_token_priority": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_token_priority": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_character": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_token_above_128k_tokens": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_token_above_128k_tokens": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_token_above_200k_tokens": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_token_above_200k_tokens": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "cache_creation_input_token_cost": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "cache_read_input_token_cost": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "cache_creation_input_token_cost_above_200k_tokens": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "cache_read_input_token_cost_above_200k_tokens": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "cache_read_input_token_cost_priority": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "cache_read_input_image_token_cost": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "cache_creation_input_audio_token_cost": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_image": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_pixel": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_pixel": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_image_token": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_token": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_low_quality": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_medium_quality": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_high_quality": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_auto_quality": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_premium_image": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_above_512_and_512_pixels": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_above_1024_and_1024_pixels": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_above_2048_and_2048_pixels": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_image_above_4096_and_4096_pixels": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_audio_token": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_audio_token": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_audio_per_second": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_second": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "input_cost_per_video_per_second": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_video_per_second": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "output_cost_per_second": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "search_context_cost_per_query": {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "code_interpreter_cost_per_session": {
+                              "type": "number",
+                              "minimum": 0
+                            }
+                          }
+                        },
+                        "config_hash": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "Auto-managed hash for config-file-sourced overrides. Do not set manually."
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error response from Bifrost",
+                  "properties": {
+                    "event_id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "is_bifrost_error": {
+                      "type": "boolean"
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "param": {
+                          "type": "string"
+                        },
+                        "event_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "extra_fields": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "description": "AI model provider identifier",
+                          "enum": [
+                            "openai",
+                            "azure",
+                            "anthropic",
+                            "bedrock",
+                            "cohere",
+                            "vertex",
+                            "vllm",
+                            "mistral",
+                            "ollama",
+                            "groq",
+                            "sgl",
+                            "parasail",
+                            "perplexity",
+                            "replicate",
+                            "cerebras",
+                            "gemini",
+                            "openrouter",
+                            "elevenlabs",
+                            "huggingface",
+                            "nebius",
+                            "xai",
+                            "runway"
+                          ]
+                        },
+                        "model_requested": {
+                          "type": "string"
+                        },
+                        "request_type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pricing override not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error response from Bifrost",
+                  "properties": {
+                    "event_id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "is_bifrost_error": {
+                      "type": "boolean"
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "param": {
+                          "type": "string"
+                        },
+                        "event_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "extra_fields": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "description": "AI model provider identifier",
+                          "enum": [
+                            "openai",
+                            "azure",
+                            "anthropic",
+                            "bedrock",
+                            "cohere",
+                            "vertex",
+                            "vllm",
+                            "mistral",
+                            "ollama",
+                            "groq",
+                            "sgl",
+                            "parasail",
+                            "perplexity",
+                            "replicate",
+                            "cerebras",
+                            "gemini",
+                            "openrouter",
+                            "elevenlabs",
+                            "huggingface",
+                            "nebius",
+                            "xai",
+                            "runway"
+                          ]
+                        },
+                        "model_requested": {
+                          "type": "string"
+                        },
+                        "request_type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Error response from Bifrost",
+                  "properties": {
+                    "event_id": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "is_bifrost_error": {
+                      "type": "boolean"
+                    },
+                    "status_code": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "param": {
+                          "type": "string"
+                        },
+                        "event_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "extra_fields": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "description": "AI model provider identifier",
+                          "enum": [
+                            "openai",
+                            "azure",
+                            "anthropic",
+                            "bedrock",
+                            "cohere",
+                            "vertex",
+                            "vllm",
+                            "mistral",
+                            "ollama",
+                            "groq",
+                            "sgl",
+                            "parasail",
+                            "perplexity",
+                            "replicate",
+                            "cerebras",
+                            "gemini",
+                            "openrouter",
+                            "elevenlabs",
+                            "huggingface",
+                            "nebius",
+                            "xai",
+                            "runway"
+                          ]
+                        },
+                        "model_requested": {
+                          "type": "string"
+                        },
+                        "request_type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deletePricingOverride",
+        "summary": "Delete pricing override",
+        "description": "Deletes a pricing override by ID.",
+        "tags": [
+          "Governance"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Pricing override ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pricing override deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Simple message response",
+                  "properties": {
+                    "message": {
+                      "type": "string"
                     }
                   }
                 }
@@ -170315,7 +172429,9 @@
                                   "type": "string"
                                 },
                                 "weight": {
-                                  "type": "number"
+                                  "type": "number",
+                                  "nullable": true,
+                                  "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                 },
                                 "allowed_models": {
                                   "type": "array",
@@ -198971,7 +201087,9 @@
                   "type": "string"
                 },
                 "weight": {
-                  "type": "number"
+                  "type": "number",
+                  "nullable": true,
+                  "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                 },
                 "allowed_models": {
                   "type": "array",
@@ -199437,7 +201555,9 @@
                       "type": "string"
                     },
                     "weight": {
-                      "type": "number"
+                      "type": "number",
+                      "nullable": true,
+                      "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                     },
                     "allowed_models": {
                       "type": "array",
@@ -199877,7 +201997,9 @@
             "type": "string"
           },
           "weight": {
-            "type": "number"
+            "type": "number",
+            "nullable": true,
+            "description": "Weight for provider load balancing. Null means excluded from weighted routing."
           },
           "allowed_models": {
             "type": "array",
@@ -200336,7 +202458,9 @@
                         "type": "string"
                       },
                       "weight": {
-                        "type": "number"
+                        "type": "number",
+                        "nullable": true,
+                        "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                       },
                       "allowed_models": {
                         "type": "array",
@@ -200781,6 +202905,7 @@
           },
           "provider_configs": {
             "type": "array",
+            "description": "Provider configurations (empty means no providers allowed, deny-by-default)",
             "items": {
               "type": "object",
               "properties": {
@@ -200788,7 +202913,9 @@
                   "type": "string"
                 },
                 "weight": {
-                  "type": "number"
+                  "type": "number",
+                  "nullable": true,
+                  "description": "Weight for load balancing. Null means excluded from weighted routing."
                 },
                 "allowed_models": {
                   "type": "array",
@@ -200843,6 +202970,7 @@
           },
           "mcp_configs": {
             "type": "array",
+            "description": "MCP configurations (empty means no MCP tools allowed, deny-by-default)",
             "items": {
               "type": "object",
               "properties": {
@@ -200927,7 +203055,9 @@
                   "type": "string"
                 },
                 "weight": {
-                  "type": "number"
+                  "type": "number",
+                  "nullable": true,
+                  "description": "Weight for load balancing. Null means excluded from weighted routing."
                 },
                 "allowed_models": {
                   "type": "array",
@@ -201147,7 +203277,9 @@
                             "type": "string"
                           },
                           "weight": {
-                            "type": "number"
+                            "type": "number",
+                            "nullable": true,
+                            "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                           },
                           "allowed_models": {
                             "type": "array",
@@ -201658,7 +203790,9 @@
                         "type": "string"
                       },
                       "weight": {
-                        "type": "number"
+                        "type": "number",
+                        "nullable": true,
+                        "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                       },
                       "allowed_models": {
                         "type": "array",
@@ -202224,7 +204358,9 @@
                                 "type": "string"
                               },
                               "weight": {
-                                "type": "number"
+                                "type": "number",
+                                "nullable": true,
+                                "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                               },
                               "allowed_models": {
                                 "type": "array",
@@ -202735,7 +204871,9 @@
                             "type": "string"
                           },
                           "weight": {
-                            "type": "number"
+                            "type": "number",
+                            "nullable": true,
+                            "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                           },
                           "allowed_models": {
                             "type": "array",
@@ -203302,7 +205440,9 @@
                                   "type": "string"
                                 },
                                 "weight": {
-                                  "type": "number"
+                                  "type": "number",
+                                  "nullable": true,
+                                  "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                 },
                                 "allowed_models": {
                                   "type": "array",
@@ -203813,7 +205953,9 @@
                               "type": "string"
                             },
                             "weight": {
-                              "type": "number"
+                              "type": "number",
+                              "nullable": true,
+                              "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                             },
                             "allowed_models": {
                               "type": "array",
@@ -204484,7 +206626,9 @@
                                   "type": "string"
                                 },
                                 "weight": {
-                                  "type": "number"
+                                  "type": "number",
+                                  "nullable": true,
+                                  "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                                 },
                                 "allowed_models": {
                                   "type": "array",
@@ -204995,7 +207139,9 @@
                               "type": "string"
                             },
                             "weight": {
-                              "type": "number"
+                              "type": "number",
+                              "nullable": true,
+                              "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                             },
                             "allowed_models": {
                               "type": "array",
@@ -205484,7 +207630,9 @@
                         "type": "string"
                       },
                       "weight": {
-                        "type": "number"
+                        "type": "number",
+                        "nullable": true,
+                        "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                       },
                       "allowed_models": {
                         "type": "array",
@@ -206021,7 +208169,9 @@
                             "type": "string"
                           },
                           "weight": {
-                            "type": "number"
+                            "type": "number",
+                            "nullable": true,
+                            "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                           },
                           "allowed_models": {
                             "type": "array",
@@ -206559,7 +208709,9 @@
                               "type": "string"
                             },
                             "weight": {
-                              "type": "number"
+                              "type": "number",
+                              "nullable": true,
+                              "description": "Weight for provider load balancing. Null means excluded from weighted routing."
                             },
                             "allowed_models": {
                               "type": "array",
@@ -209093,6 +211245,1267 @@
                 "type": "string"
               }
             }
+          }
+        }
+      },
+      "PricingOverrideRequestType": {
+        "type": "string",
+        "description": "Request type for pricing override filtering. Stream variants are treated identically to their base type — specifying `chat_completion` covers both streaming and non-streaming chat requests.\n",
+        "enum": [
+          "chat_completion",
+          "text_completion",
+          "responses",
+          "embedding",
+          "rerank",
+          "speech",
+          "transcription",
+          "image_generation",
+          "image_variation",
+          "image_edit",
+          "video_generation",
+          "video_remix"
+        ]
+      },
+      "PricingPatch": {
+        "type": "object",
+        "description": "Pricing fields to override. Only non-zero/non-null fields are applied. All values are cost per unit in USD.\n",
+        "properties": {
+          "input_cost_per_token": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_token": {
+            "type": "number",
+            "minimum": 0
+          },
+          "input_cost_per_token_batches": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_token_batches": {
+            "type": "number",
+            "minimum": 0
+          },
+          "input_cost_per_token_priority": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_token_priority": {
+            "type": "number",
+            "minimum": 0
+          },
+          "input_cost_per_character": {
+            "type": "number",
+            "minimum": 0
+          },
+          "input_cost_per_token_above_128k_tokens": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_token_above_128k_tokens": {
+            "type": "number",
+            "minimum": 0
+          },
+          "input_cost_per_token_above_200k_tokens": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_token_above_200k_tokens": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cache_creation_input_token_cost": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cache_read_input_token_cost": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cache_creation_input_token_cost_above_200k_tokens": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cache_read_input_token_cost_above_200k_tokens": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cache_read_input_token_cost_priority": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cache_read_input_image_token_cost": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cache_creation_input_audio_token_cost": {
+            "type": "number",
+            "minimum": 0
+          },
+          "input_cost_per_image": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_image": {
+            "type": "number",
+            "minimum": 0
+          },
+          "input_cost_per_pixel": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_pixel": {
+            "type": "number",
+            "minimum": 0
+          },
+          "input_cost_per_image_token": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_image_token": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_image_low_quality": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_image_medium_quality": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_image_high_quality": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_image_auto_quality": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_image_premium_image": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_image_above_512_and_512_pixels": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_image_above_1024_and_1024_pixels": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_image_above_2048_and_2048_pixels": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_image_above_4096_and_4096_pixels": {
+            "type": "number",
+            "minimum": 0
+          },
+          "input_cost_per_audio_token": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_audio_token": {
+            "type": "number",
+            "minimum": 0
+          },
+          "input_cost_per_audio_per_second": {
+            "type": "number",
+            "minimum": 0
+          },
+          "input_cost_per_second": {
+            "type": "number",
+            "minimum": 0
+          },
+          "input_cost_per_video_per_second": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_video_per_second": {
+            "type": "number",
+            "minimum": 0
+          },
+          "output_cost_per_second": {
+            "type": "number",
+            "minimum": 0
+          },
+          "search_context_cost_per_query": {
+            "type": "number",
+            "minimum": 0
+          },
+          "code_interpreter_cost_per_session": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      },
+      "PricingOverride": {
+        "type": "object",
+        "description": "A pricing override that applies custom rates to matching requests.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique override ID (UUID)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable label"
+          },
+          "scope_kind": {
+            "type": "string",
+            "enum": [
+              "global",
+              "provider",
+              "provider_key",
+              "virtual_key",
+              "virtual_key_provider",
+              "virtual_key_provider_key"
+            ],
+            "description": "Scope that determines which requests this override applies to"
+          },
+          "virtual_key_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Required for virtual_key* scopes"
+          },
+          "provider_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Required for provider and virtual_key_provider scopes"
+          },
+          "provider_key_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Required for provider_key and virtual_key_provider_key scopes"
+          },
+          "match_type": {
+            "type": "string",
+            "enum": [
+              "exact",
+              "wildcard"
+            ],
+            "description": "How the pattern is matched against the model name"
+          },
+          "pattern": {
+            "type": "string",
+            "description": "Model name or wildcard prefix (e.g. \"gpt-4o\" or \"claude-3*\")"
+          },
+          "request_types": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "description": "Request type for pricing override filtering. Stream variants are treated identically to their base type — specifying `chat_completion` covers both streaming and non-streaming chat requests.\n",
+              "enum": [
+                "chat_completion",
+                "text_completion",
+                "responses",
+                "embedding",
+                "rerank",
+                "speech",
+                "transcription",
+                "image_generation",
+                "image_variation",
+                "image_edit",
+                "video_generation",
+                "video_remix"
+              ]
+            },
+            "description": "Request types this override applies to. At least one value is required."
+          },
+          "pricing_patch": {
+            "type": "string",
+            "description": "JSON-encoded pricing fields to override (as stored in the database)"
+          },
+          "patch": {
+            "type": "object",
+            "description": "Decoded pricing fields (present in API responses)",
+            "properties": {
+              "input_cost_per_token": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_token": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_token_batches": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_token_batches": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_token_priority": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_token_priority": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_character": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_token_above_128k_tokens": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_token_above_128k_tokens": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_token_above_200k_tokens": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_token_above_200k_tokens": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_creation_input_token_cost": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_read_input_token_cost": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_creation_input_token_cost_above_200k_tokens": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_read_input_token_cost_above_200k_tokens": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_read_input_token_cost_priority": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_read_input_image_token_cost": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_creation_input_audio_token_cost": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_image": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_pixel": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_pixel": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_image_token": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_token": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_low_quality": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_medium_quality": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_high_quality": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_auto_quality": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_premium_image": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_above_512_and_512_pixels": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_above_1024_and_1024_pixels": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_above_2048_and_2048_pixels": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_above_4096_and_4096_pixels": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_audio_token": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_audio_token": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_audio_per_second": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_second": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_video_per_second": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_video_per_second": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_second": {
+                "type": "number",
+                "minimum": 0
+              },
+              "search_context_cost_per_query": {
+                "type": "number",
+                "minimum": 0
+              },
+              "code_interpreter_cost_per_session": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          },
+          "config_hash": {
+            "type": "string",
+            "nullable": true,
+            "description": "Auto-managed hash for config-file-sourced overrides. Do not set manually."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreatePricingOverrideRequest": {
+        "type": "object",
+        "description": "Request body for creating or updating a pricing override.",
+        "required": [
+          "name",
+          "scope_kind",
+          "match_type",
+          "pattern",
+          "request_types"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Human-readable label"
+          },
+          "scope_kind": {
+            "type": "string",
+            "enum": [
+              "global",
+              "provider",
+              "provider_key",
+              "virtual_key",
+              "virtual_key_provider",
+              "virtual_key_provider_key"
+            ]
+          },
+          "virtual_key_id": {
+            "type": "string",
+            "description": "Required for virtual_key* scopes"
+          },
+          "provider_id": {
+            "type": "string",
+            "description": "Required for provider and virtual_key_provider scopes"
+          },
+          "provider_key_id": {
+            "type": "string",
+            "description": "Required for provider_key and virtual_key_provider_key scopes"
+          },
+          "match_type": {
+            "type": "string",
+            "enum": [
+              "exact",
+              "wildcard"
+            ]
+          },
+          "pattern": {
+            "type": "string",
+            "description": "Model name or wildcard prefix ending with * (e.g. \"claude-3*\")"
+          },
+          "request_types": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "description": "Request type for pricing override filtering. Stream variants are treated identically to their base type — specifying `chat_completion` covers both streaming and non-streaming chat requests.\n",
+              "enum": [
+                "chat_completion",
+                "text_completion",
+                "responses",
+                "embedding",
+                "rerank",
+                "speech",
+                "transcription",
+                "image_generation",
+                "image_variation",
+                "image_edit",
+                "video_generation",
+                "video_remix"
+              ]
+            },
+            "description": "Request types this override applies to. At least one value is required."
+          },
+          "patch": {
+            "type": "object",
+            "description": "Pricing fields to override. Only non-zero/non-null fields are applied. All values are cost per unit in USD.\n",
+            "properties": {
+              "input_cost_per_token": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_token": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_token_batches": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_token_batches": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_token_priority": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_token_priority": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_character": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_token_above_128k_tokens": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_token_above_128k_tokens": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_token_above_200k_tokens": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_token_above_200k_tokens": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_creation_input_token_cost": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_read_input_token_cost": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_creation_input_token_cost_above_200k_tokens": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_read_input_token_cost_above_200k_tokens": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_read_input_token_cost_priority": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_read_input_image_token_cost": {
+                "type": "number",
+                "minimum": 0
+              },
+              "cache_creation_input_audio_token_cost": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_image": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_pixel": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_pixel": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_image_token": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_token": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_low_quality": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_medium_quality": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_high_quality": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_auto_quality": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_premium_image": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_above_512_and_512_pixels": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_above_1024_and_1024_pixels": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_above_2048_and_2048_pixels": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_image_above_4096_and_4096_pixels": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_audio_token": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_audio_token": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_audio_per_second": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_second": {
+                "type": "number",
+                "minimum": 0
+              },
+              "input_cost_per_video_per_second": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_video_per_second": {
+                "type": "number",
+                "minimum": 0
+              },
+              "output_cost_per_second": {
+                "type": "number",
+                "minimum": 0
+              },
+              "search_context_cost_per_query": {
+                "type": "number",
+                "minimum": 0
+              },
+              "code_interpreter_cost_per_session": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      },
+      "PricingOverrideResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "pricing_override": {
+            "type": "object",
+            "description": "A pricing override that applies custom rates to matching requests.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique override ID (UUID)"
+              },
+              "name": {
+                "type": "string",
+                "description": "Human-readable label"
+              },
+              "scope_kind": {
+                "type": "string",
+                "enum": [
+                  "global",
+                  "provider",
+                  "provider_key",
+                  "virtual_key",
+                  "virtual_key_provider",
+                  "virtual_key_provider_key"
+                ],
+                "description": "Scope that determines which requests this override applies to"
+              },
+              "virtual_key_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Required for virtual_key* scopes"
+              },
+              "provider_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Required for provider and virtual_key_provider scopes"
+              },
+              "provider_key_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Required for provider_key and virtual_key_provider_key scopes"
+              },
+              "match_type": {
+                "type": "string",
+                "enum": [
+                  "exact",
+                  "wildcard"
+                ],
+                "description": "How the pattern is matched against the model name"
+              },
+              "pattern": {
+                "type": "string",
+                "description": "Model name or wildcard prefix (e.g. \"gpt-4o\" or \"claude-3*\")"
+              },
+              "request_types": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "description": "Request type for pricing override filtering. Stream variants are treated identically to their base type — specifying `chat_completion` covers both streaming and non-streaming chat requests.\n",
+                  "enum": [
+                    "chat_completion",
+                    "text_completion",
+                    "responses",
+                    "embedding",
+                    "rerank",
+                    "speech",
+                    "transcription",
+                    "image_generation",
+                    "image_variation",
+                    "image_edit",
+                    "video_generation",
+                    "video_remix"
+                  ]
+                },
+                "description": "Request types this override applies to. At least one value is required."
+              },
+              "pricing_patch": {
+                "type": "string",
+                "description": "JSON-encoded pricing fields to override (as stored in the database)"
+              },
+              "patch": {
+                "type": "object",
+                "description": "Decoded pricing fields (present in API responses)",
+                "properties": {
+                  "input_cost_per_token": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_token": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "input_cost_per_token_batches": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_token_batches": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "input_cost_per_token_priority": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_token_priority": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "input_cost_per_character": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "input_cost_per_token_above_128k_tokens": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_token_above_128k_tokens": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "input_cost_per_token_above_200k_tokens": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_token_above_200k_tokens": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "cache_creation_input_token_cost": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "cache_read_input_token_cost": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "cache_creation_input_token_cost_above_200k_tokens": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "cache_read_input_token_cost_above_200k_tokens": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "cache_read_input_token_cost_priority": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "cache_read_input_image_token_cost": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "cache_creation_input_audio_token_cost": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "input_cost_per_image": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_image": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "input_cost_per_pixel": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_pixel": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "input_cost_per_image_token": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_image_token": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_image_low_quality": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_image_medium_quality": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_image_high_quality": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_image_auto_quality": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_image_premium_image": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_image_above_512_and_512_pixels": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_image_above_1024_and_1024_pixels": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_image_above_2048_and_2048_pixels": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_image_above_4096_and_4096_pixels": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "input_cost_per_audio_token": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_audio_token": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "input_cost_per_audio_per_second": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "input_cost_per_second": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "input_cost_per_video_per_second": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_video_per_second": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "output_cost_per_second": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "search_context_cost_per_query": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "code_interpreter_cost_per_session": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                }
+              },
+              "config_hash": {
+                "type": "string",
+                "nullable": true,
+                "description": "Auto-managed hash for config-file-sourced overrides. Do not set manually."
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "ListPricingOverridesResponse": {
+        "type": "object",
+        "properties": {
+          "pricing_overrides": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "A pricing override that applies custom rates to matching requests.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique override ID (UUID)"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Human-readable label"
+                },
+                "scope_kind": {
+                  "type": "string",
+                  "enum": [
+                    "global",
+                    "provider",
+                    "provider_key",
+                    "virtual_key",
+                    "virtual_key_provider",
+                    "virtual_key_provider_key"
+                  ],
+                  "description": "Scope that determines which requests this override applies to"
+                },
+                "virtual_key_id": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Required for virtual_key* scopes"
+                },
+                "provider_id": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Required for provider and virtual_key_provider scopes"
+                },
+                "provider_key_id": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Required for provider_key and virtual_key_provider_key scopes"
+                },
+                "match_type": {
+                  "type": "string",
+                  "enum": [
+                    "exact",
+                    "wildcard"
+                  ],
+                  "description": "How the pattern is matched against the model name"
+                },
+                "pattern": {
+                  "type": "string",
+                  "description": "Model name or wildcard prefix (e.g. \"gpt-4o\" or \"claude-3*\")"
+                },
+                "request_types": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string",
+                    "description": "Request type for pricing override filtering. Stream variants are treated identically to their base type — specifying `chat_completion` covers both streaming and non-streaming chat requests.\n",
+                    "enum": [
+                      "chat_completion",
+                      "text_completion",
+                      "responses",
+                      "embedding",
+                      "rerank",
+                      "speech",
+                      "transcription",
+                      "image_generation",
+                      "image_variation",
+                      "image_edit",
+                      "video_generation",
+                      "video_remix"
+                    ]
+                  },
+                  "description": "Request types this override applies to. At least one value is required."
+                },
+                "pricing_patch": {
+                  "type": "string",
+                  "description": "JSON-encoded pricing fields to override (as stored in the database)"
+                },
+                "patch": {
+                  "type": "object",
+                  "description": "Decoded pricing fields (present in API responses)",
+                  "properties": {
+                    "input_cost_per_token": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_token": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "input_cost_per_token_batches": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_token_batches": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "input_cost_per_token_priority": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_token_priority": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "input_cost_per_character": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "input_cost_per_token_above_128k_tokens": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_token_above_128k_tokens": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "input_cost_per_token_above_200k_tokens": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_token_above_200k_tokens": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "cache_creation_input_token_cost": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "cache_read_input_token_cost": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "cache_creation_input_token_cost_above_200k_tokens": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "cache_read_input_token_cost_above_200k_tokens": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "cache_read_input_token_cost_priority": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "cache_read_input_image_token_cost": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "cache_creation_input_audio_token_cost": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "input_cost_per_image": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_image": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "input_cost_per_pixel": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_pixel": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "input_cost_per_image_token": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_image_token": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_image_low_quality": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_image_medium_quality": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_image_high_quality": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_image_auto_quality": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_image_premium_image": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_image_above_512_and_512_pixels": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_image_above_1024_and_1024_pixels": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_image_above_2048_and_2048_pixels": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_image_above_4096_and_4096_pixels": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "input_cost_per_audio_token": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_audio_token": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "input_cost_per_audio_per_second": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "input_cost_per_second": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "input_cost_per_video_per_second": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_video_per_second": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "output_cost_per_second": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "search_context_cost_per_query": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "code_interpreter_cost_per_session": {
+                      "type": "number",
+                      "minimum": 0
+                    }
+                  }
+                },
+                "config_hash": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Auto-managed hash for config-file-sourced overrides. Do not set manually."
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "count": {
+            "type": "integer",
+            "description": "Total number of overrides returned"
           }
         }
       },
